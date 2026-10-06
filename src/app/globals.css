@@ -1,26 +1,254 @@
 @import "tailwindcss";
+@import "./m3-tokens.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* M3 color roles → Tailwind utilities (bg-primary, text-on-surface, ...) */
+  --color-primary: var(--md-sys-color-primary);
+  --color-on-primary: var(--md-sys-color-on-primary);
+  --color-primary-container: var(--md-sys-color-primary-container);
+  --color-on-primary-container: var(--md-sys-color-on-primary-container);
+  --color-secondary: var(--md-sys-color-secondary);
+  --color-on-secondary: var(--md-sys-color-on-secondary);
+  --color-secondary-container: var(--md-sys-color-secondary-container);
+  --color-on-secondary-container: var(--md-sys-color-on-secondary-container);
+  --color-tertiary: var(--md-sys-color-tertiary);
+  --color-on-tertiary: var(--md-sys-color-on-tertiary);
+  --color-tertiary-container: var(--md-sys-color-tertiary-container);
+  --color-on-tertiary-container: var(--md-sys-color-on-tertiary-container);
+  --color-error: var(--md-sys-color-error);
+  --color-on-error: var(--md-sys-color-on-error);
+  --color-error-container: var(--md-sys-color-error-container);
+  --color-on-error-container: var(--md-sys-color-on-error-container);
+  --color-surface: var(--md-sys-color-surface);
+  --color-on-surface: var(--md-sys-color-on-surface);
+  --color-on-surface-variant: var(--md-sys-color-on-surface-variant);
+  --color-surface-dim: var(--md-sys-color-surface-dim);
+  --color-surface-bright: var(--md-sys-color-surface-bright);
+  --color-surface-container-lowest: var(--md-sys-color-surface-container-lowest);
+  --color-surface-container-low: var(--md-sys-color-surface-container-low);
+  --color-surface-container: var(--md-sys-color-surface-container);
+  --color-surface-container-high: var(--md-sys-color-surface-container-high);
+  --color-surface-container-highest: var(--md-sys-color-surface-container-highest);
+  --color-outline: var(--md-sys-color-outline);
+  --color-outline-variant: var(--md-sys-color-outline-variant);
+  --color-inverse-surface: var(--md-sys-color-inverse-surface);
+  --color-inverse-on-surface: var(--md-sys-color-inverse-on-surface);
+  --color-inverse-primary: var(--md-sys-color-inverse-primary);
+
+  /* M3 shape scale → rounded-xs / rounded-s / rounded-m / rounded-l / rounded-xl */
+  --radius-xs: 4px;
+  --radius-s: 8px;
+  --radius-m: 12px;
+  --radius-l: 16px;
+  --radius-xl: 28px;
+
+  --font-sans: var(--font-roboto), "Roboto", system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* M3 elevation: surface containers carry most elevation; shadows are subtle. */
+@utility elevation-1 {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.3),
+    0 1px 3px 1px rgb(0 0 0 / 0.15);
+}
+
+@utility elevation-2 {
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 0.3),
+    0 2px 6px 2px rgb(0 0 0 / 0.15);
+}
+
+/* M3 type scale (condensed to the roles we use) */
+@utility m3-display-small {
+  font-size: 3.5625rem;
+  line-height: 4rem;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+@utility m3-headline-large {
+  font-size: 2rem;
+  line-height: 2.5rem;
+  font-weight: 400;
+}
+
+@utility m3-headline-small {
+  font-size: 1.75rem;
+  line-height: 2.25rem;
+  font-weight: 400;
+}
+
+@utility m3-title-large {
+  font-size: 1.375rem;
+  line-height: 1.75rem;
+  font-weight: 400;
+}
+
+@utility m3-title-medium {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  font-weight: 500;
+  letter-spacing: 0.00937em;
+}
+
+@utility m3-title-small {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0.00714em;
+}
+
+@utility m3-body-large {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  letter-spacing: 0.03125em;
+}
+
+@utility m3-body-medium {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  letter-spacing: 0.01786em;
+}
+
+@utility m3-body-small {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  letter-spacing: 0.025em;
+}
+
+@utility m3-label-large {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  font-weight: 500;
+  letter-spacing: 0.00714em;
+}
+
+@utility m3-label-medium {
+  font-size: 0.75rem;
+  line-height: 1rem;
+  font-weight: 500;
+  letter-spacing: 0.06667em;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
+  font-family: var(--font-roboto), "Roboto", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--md-sys-color-secondary-container);
+  color: var(--md-sys-color-on-secondary-container);
+}
+
+/* Markdown body (entry reading view) */
+.markdown-body {
+  font-size: 1rem;
+  line-height: 1.65;
+  letter-spacing: 0.03125em;
+  color: var(--md-sys-color-on-surface);
+}
+
+.markdown-body > * + * {
+  margin-top: 1em;
+}
+
+.markdown-body h1 {
+  font-size: 1.75rem;
+  line-height: 2.25rem;
+  font-weight: 500;
+  margin-top: 1.5em;
+}
+
+.markdown-body h2 {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 500;
+  margin-top: 1.4em;
+}
+
+.markdown-body h3 {
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 500;
+  margin-top: 1.3em;
+}
+
+.markdown-body h1:first-child,
+.markdown-body h2:first-child,
+.markdown-body h3:first-child {
+  margin-top: 0;
+}
+
+.markdown-body a {
+  color: var(--md-sys-color-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.markdown-body ul,
+.markdown-body ol {
+  padding-left: 1.5rem;
+}
+
+.markdown-body ul {
+  list-style: disc;
+}
+
+.markdown-body ol {
+  list-style: decimal;
+}
+
+.markdown-body li + li {
+  margin-top: 0.35em;
+}
+
+.markdown-body code {
+  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  background: var(--md-sys-color-surface-container-high);
+  padding: 0.15em 0.4em;
+  border-radius: var(--radius-xs);
+}
+
+.markdown-body pre {
+  background: var(--md-sys-color-surface-container-high);
+  padding: 1rem;
+  border-radius: var(--radius-m);
+  overflow-x: auto;
+}
+
+.markdown-body pre code {
+  background: none;
+  padding: 0;
+}
+
+.markdown-body blockquote {
+  border-left: 4px solid var(--md-sys-color-outline-variant);
+  padding-left: 1rem;
+  color: var(--md-sys-color-on-surface-variant);
+}
+
+.markdown-body hr {
+  border: none;
+  border-top: 1px solid var(--md-sys-color-outline-variant);
+}
+
+.markdown-body table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.markdown-body th,
+.markdown-body td {
+  border: 1px solid var(--md-sys-color-outline-variant);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+.markdown-body th {
+  background: var(--md-sys-color-surface-container);
 }

@@ -1,69 +1,123 @@
-import Image from "next/image";
+import Link from "next/link";
+import { listEntries, type Entry } from "@/lib/db";
+import { excerpt, formatDate } from "@/lib/format";
+import { Card } from "@/components/ui";
 
-export default function Home() {
+function SetupNotice({ message }: { message: string }) {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <div className="rounded-m bg-error-container p-5 text-on-error-container">
+      <p className="m3-title-medium">Database not ready</p>
+      <p className="m3-body-medium mt-1">{message}</p>
+    </div>
+  );
+}
+
+function EmptyState({ filtered }: { filtered: boolean }) {
+  return (
+    <div className="rounded-m border border-dashed border-outline-variant p-10 text-center">
+      <p className="m3-title-medium text-on-surface">
+        {filtered ? "No matching entries" : "No entries yet"}
+      </p>
+      <p className="m3-body-medium mt-1 text-on-surface-variant">
+        {filtered
+          ? "Try a different search or clear the filters."
+          : "Press the + button to write what you learned today."}
+      </p>
+    </div>
+  );
+}
+
+export default async function HomePage({ searchParams }: PageProps<"/">) {
+  const params = await searchParams;
+  const q = typeof params.q === "string" ? params.q.trim() : "";
+  const date = typeof params.date === "string" ? params.date.trim() : "";
+
+  let entries: Entry[] = [];
+  let dbError: string | null = null;
+  try {
+    entries = await listEntries({ q: q || undefined, date: date || undefined });
+  } catch (err) {
+    dbError = err instanceof Error ? err.message : "Unknown error";
+  }
+
+  return (
+    <div className="flex flex-col gap-6">
+      <form method="get" action="/" className="flex flex-wrap items-end gap-3">
+        <label className="min-w-52 flex-1">
+          <span className="m3-label-medium mb-1.5 block text-on-surface-variant">Search</span>
+          <input
+            type="search"
+            name="q"
+            defaultValue={q}
+            placeholder="Search notes…"
+            className="m3-body-large w-full rounded-s border border-outline bg-surface px-4 py-2.5 text-on-surface outline-none transition-shadow placeholder:text-on-surface-variant/70 focus:ring-2 focus:ring-primary/50"
+          />
+        </label>
+        <label>
+          <span className="m3-label-medium mb-1.5 block text-on-surface-variant">Date</span>
+          <input
+            type="date"
+            name="date"
+            defaultValue={date}
+            className="m3-body-large rounded-s border border-outline bg-surface px-4 py-2.5 text-on-surface outline-none transition-shadow focus:ring-2 focus:ring-primary/50"
+          />
+        </label>
+        <div className="flex gap-2">
+          <button
+            type="submit"
+            className="m3-label-large h-10 rounded-full bg-secondary-container px-5 text-on-secondary-container transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Filter
+          </button>
+          {(q || date) && (
+            <Link
+              href="/"
+              className="m3-label-large inline-flex h-10 items-center rounded-full px-4 text-primary transition-colors hover:bg-primary/8"
+            >
+              Clear
+            </Link>
+          )}
         </div>
-      </main>
+      </form>
+
+      {dbError ? (
+        <SetupNotice message={dbError} />
+      ) : entries.length === 0 ? (
+        <EmptyState filtered={Boolean(q || date)} />
+      ) : (
+        <ul className="flex flex-col gap-3">
+          {entries.map((entry) => (
+            <li key={entry.id}>
+              <Link href={`/entry/${entry.id}`} className="block focus-visible:outline-none">
+                <Card className="transition-shadow hover:elevation-1 focus-visible:ring-2 focus-visible:ring-primary/50">
+                  <div className="flex items-center justify-between gap-3">
+                    <h2 className="m3-title-medium truncate text-on-surface">{entry.title}</h2>
+                    <time
+                      dateTime={entry.entry_date}
+                      className="m3-label-medium shrink-0 rounded-full bg-secondary-container px-3 py-1 text-on-secondary-container"
+                    >
+                      {formatDate(entry.entry_date)}
+                    </time>
+                  </div>
+                  <p className="m3-body-medium mt-2 line-clamp-2 text-on-surface-variant">
+                    {excerpt(entry.content) || "No notes"}
+                  </p>
+                </Card>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      <Link
+        href="/new"
+        aria-label="New entry"
+        className="fixed right-6 bottom-6 z-10 inline-flex h-14 w-14 items-center justify-center rounded-full bg-primary-container text-on-primary-container elevation-2 transition-transform hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/50"
+      >
+        <svg viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor" aria-hidden>
+          <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2Z" />
+        </svg>
+      </Link>
     </div>
   );
 }
