@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeMenu } from "@/components/theme-menu";
 
 export function LogoutButton() {
   const router = useRouter();
@@ -26,7 +26,7 @@ export function HeaderActions({ authed }: { authed: boolean }) {
   return (
     <div className="flex items-center gap-1">
       {authed ? <LogoutButton /> : null}
-      <ThemeToggle />
+      <ThemeMenu />
     </div>
   );
 }
