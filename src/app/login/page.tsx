@@ -17,7 +17,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
           Reading is open to everyone. Enter the password to create or edit entries.
         </p>
       </div>
-      <LoginForm />
+      <LoginForm next={next} />
     </div>
   );
 }

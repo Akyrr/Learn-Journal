@@ -1,11 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button, TextField } from "@/components/ui";
 
-export function LoginForm() {
-  const router = useRouter();
+export function LoginForm({ next }: { next: string }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
@@ -25,9 +23,10 @@ export function LoginForm() {
         setError(data.error ?? "Login failed");
         return;
       }
-      // Re-render the login route: once the session cookie exists it redirects to `next`
-      // and the refreshed payload also updates the header's auth state.
-      router.refresh();
+      // Hard navigation on purpose: router.push + router.refresh race and can leave
+      // a blank page (the login route's redirect isn't applied when it was reached
+      // via client-side navigation). A full load guarantees fresh session + layout.
+      window.location.replace(next);
     } catch {
       setError("Network error");
     } finally {
