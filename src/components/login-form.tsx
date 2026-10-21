@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, TextField } from "@/components/ui";
 
-export function LoginForm({ next }: { next: string }) {
+export function LoginForm() {
   const router = useRouter();
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -25,7 +25,8 @@ export function LoginForm({ next }: { next: string }) {
         setError(data.error ?? "Login failed");
         return;
       }
-      router.push(next);
+      // Re-render the login route: once the session cookie exists it redirects to `next`
+      // and the refreshed payload also updates the header's auth state.
       router.refresh();
     } catch {
       setError("Network error");
