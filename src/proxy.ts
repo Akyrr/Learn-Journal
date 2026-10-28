@@ -1,11 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { isValidSessionToken, SESSION_COOKIE } from "@/lib/auth";
+import { safeNextPath } from "@/lib/redirect";
 
 const MUTATING = new Set(["POST", "PUT", "PATCH", "DELETE"]);
-
-function safeNext(path: string): string {
-  return path.startsWith("/") && !path.startsWith("//") && !path.includes("\\") ? path : "/";
-}
 
 export function proxy(request: NextRequest) {
   const { pathname, search } = request.nextUrl;
@@ -23,7 +20,7 @@ export function proxy(request: NextRequest) {
 
   if (!authed) {
     const login = new URL("/login", request.url);
-    login.searchParams.set("next", safeNext(pathname + search));
+    login.searchParams.set("next", safeNextPath(pathname + search));
     return NextResponse.redirect(login);
   }
 

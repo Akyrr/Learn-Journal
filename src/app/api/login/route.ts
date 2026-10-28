@@ -21,8 +21,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Server is missing AUTH_PASSWORD" }, { status: 500 });
   }
 
+  let token: string;
+  try {
+    token = createSessionToken();
+  } catch {
+    return NextResponse.json({ error: "Server is missing AUTH_SECRET" }, { status: 500 });
+  }
+
   const response = NextResponse.json({ ok: true });
-  response.cookies.set(SESSION_COOKIE, createSessionToken(), {
+  response.cookies.set(SESSION_COOKIE, token, {
     httpOnly: true,
     sameSite: "lax",
     secure: process.env.NODE_ENV === "production",

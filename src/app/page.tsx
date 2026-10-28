@@ -37,7 +37,8 @@ export default async function HomePage({ searchParams }: PageProps<"/">) {
   try {
     entries = await listEntries({ q: q || undefined, date: date || undefined });
   } catch (err) {
-    dbError = err instanceof Error ? err.message : "Unknown error";
+    console.error(err);
+    dbError = "Could not reach the database right now. Please try again in a moment.";
   }
 
   return (

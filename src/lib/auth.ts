@@ -5,8 +5,8 @@ export const SESSION_COOKIE = "lj_session";
 const SESSION_DAYS = 30;
 
 function secret(): string {
-  const s = process.env.AUTH_SECRET ?? process.env.AUTH_PASSWORD;
-  if (!s) throw new Error("Set AUTH_SECRET (or AUTH_PASSWORD) in the environment");
+  const s = process.env.AUTH_SECRET;
+  if (!s) throw new Error("Set AUTH_SECRET in the environment");
   return s;
 }
 

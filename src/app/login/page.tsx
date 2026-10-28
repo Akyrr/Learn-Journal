@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import { hasWriteSession } from "@/lib/auth";
+import { safeNextPath } from "@/lib/redirect";
 import { LoginForm } from "@/components/login-form";
 
 export default async function LoginPage({ searchParams }: PageProps<"/login">) {
   const params = await searchParams;
-  const rawNext = typeof params.next === "string" ? params.next : "/";
-  const next = rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/";
+  const next = safeNextPath(typeof params.next === "string" ? params.next : null);
 
   if (await hasWriteSession()) redirect(next);
 
